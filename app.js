@@ -17,7 +17,7 @@ let makedevice = (name, port, id) => {
 
 let fauxMo = new FauxMo(
     {
-        ipAddress: '192.168.0.106',
+        ipAddress: '192.168.0.102',
         devices: [ 
 		makedevice('Bedroom',11000,1),
 		makedevice('Living Room',11001,2),
