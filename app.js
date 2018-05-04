@@ -1,28 +1,17 @@
 'use strict';
 
 var request = require('request');
-
 const FauxMo = require('fauxmojs');
-
-let toggle = (id, action) => {
-	var url = "http://192.168.0.106/rfout/toggle.php?outletStatus=" + action + "&outletId=" + id
-	console.log('Requesting ', id, action, url);
-	request(url, function (error, response, body) {
-	    if (!error && response.statusCode == 200) {
-		setTimeout(function(){console.log(body);},1000);
-	     }
-	     else { console.log("error", error) }
-	});
-}
+const toggler = require('./toggler');
 
 let makedevice = (name, port, id) => {
 	return {
-                name: name,
-                port: port,
-                handler: (action) => { 
-			toggle(id,action);
+		name: name,
+		port: port,
+		handler: (action) => { 
+			toggler.ToggleOn(id, action)
 			setTimeout(function(){console.log(name, port, id);},1000);
-		 }
+		}
 	}
 }
 
