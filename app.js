@@ -4,21 +4,14 @@ var request = require('request');
 const FauxMo = require('fauxmojs');
 const toggler = require('./toggler');
 
-RedisSMQ = require("rsmq");
-rsmq = new RedisSMQ({ host: "127.0.0.1", port: 6379, ns: "rsmq" });
-
-rsmq.createQueue({ qname: "myqueue" }, function (err, resp) {
-	if (resp === 1) {
-		console.log("queue created")
-	}
-});
-
 let makedevice = (name, port, id) => {
 	return {
 		name: name,
 		port: port,
 		handler: (action) => {
-			rsmq.sendMessage({qname:"myqueue", message:{id: id,action: action}}, function (err, resp) {
+			console.log("sending ", action);
+			var msg = JSON.stringify({name: name, port: port, id: id, action: action});
+			rsmq.sendMessage({ qname: "myqueue", message: msg }, function (err, resp) {
 				if (resp) {
 					console.log("Message sent. ID:", resp);
 				}
@@ -43,4 +36,14 @@ let fauxMo = new FauxMo(
 		]
 	});
 
+RedisSMQ = require("rsmq");
+rsmq = new RedisSMQ({ host: "192.168.0.102", port: 6379, ns: "rsmq" });
+rsmq.createQueue({ qname: "myqueue" }, (err, resp) => {
+	if (resp === 1) {
+		console.log("queue created")
+	}
+});
 console.log('started..');
+
+
+getmsg();

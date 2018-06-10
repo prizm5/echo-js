@@ -1,25 +1,25 @@
 var outlets = require('./outlets.json');
 var exec = require('child_process').exec;
-
 var codeSendPulseLength = "189";
 var codeSendPIN = "0";
-
 RedisSMQ = require("rsmq");
 rsmq = new RedisSMQ({ host: "127.0.0.1", port: 6379, ns: "rsmq" });
-rsmq.receiveMessage({qname:"myqueue"}, function (err, resp) {
-	if (resp.id) {
-		console.log("Message received.", resp)	
-	}
-	else {
-		console.log("No messages for me...")
-	}
-});
 
-var exec = require('child_process').exec;
-var sendCode = function (code) {
+getmsg = () => {
+	rsmq.popMessage({qname:"myqueue"}, function (err, resp) {
+		if (resp.id) {
+      var msg = JSON.parse(resp.message)	;
+      console.log("Message received.", msg);
+      Toggle(msg.id, msg.action);
+		}
+		setTimeout(getmsg, 1000);
+	});
+};
+
+var sendCode = (code) => {
   var cmd = 'sudo ./codesend ' + code + ' -p ' + codeSendPIN + ' -l ' + codeSendPulseLength;
   console.log("Executing command: ", cmd);
-  return exec(cmd, function callback(error, stdout, stderr) {
+  return exec(cmd, (error, stdout, stderr) => {
     if (error) {
       console.log('Error calling cmd: ', cmd, error);
       return false;
@@ -35,7 +35,7 @@ var sendCode = function (code) {
   });
 }
 
-exports.ToggleOn = function (id, state) {
+Toggle = (id, state) => {
   if (id == 6) {
     var o = outlets;
   }
