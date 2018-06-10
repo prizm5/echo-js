@@ -5,14 +5,14 @@ var codeSendPIN = "0";
 RedisSMQ = require("rsmq");
 rsmq = new RedisSMQ({ host: "127.0.0.1", port: 6379, ns: "rsmq" });
 
-getmsg = () => {
+startLightListener = () => {
 	rsmq.popMessage({qname:"myqueue"}, function (err, resp) {
 		if (resp.id) {
       var msg = JSON.parse(resp.message)	;
       console.log("Message received.", msg);
       Toggle(msg.id, msg.action);
 		}
-		setTimeout(getmsg, 1000);
+		setTimeout(startLightListener, 1000);
 	});
 };
 
