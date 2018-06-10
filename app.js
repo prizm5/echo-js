@@ -11,6 +11,9 @@ let makedevice = (name, port, id) => {
 		handler: (action) => { 
 			toggler.ToggleOn(id, action)
 			setTimeout(function(){console.log(name, port, id);},1000);
+		},
+		getStateHandler: (device) => {
+			return 1; // Always on.
 		}
 	}
 }
