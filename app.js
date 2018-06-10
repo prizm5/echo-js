@@ -20,9 +20,8 @@ let makedevice = (name, port, id) => {
 		name: name,
 		port: port,
 		handler: (action) => {
-			console.log("sending ", action);
 			var msg = JSON.stringify({name: name, port: port, id: id, action: action});
-			rsmq.sendMessage({ qname: "myqueue", message: msg }, function (err, resp) {
+			rsmq.sendMessage({ qname: "myqueue", message: msg }, (err, resp) => {
 				if (resp) { console.log("Message sent. ID:", resp); }
 			});
 		},
@@ -33,7 +32,7 @@ let makedevice = (name, port, id) => {
 	}
 }
 
-let fauxMo = new FauxMo( {
+let fauxMo = new FauxMo({
 	ipAddress: '192.168.0.102',
 	devices: [
 		makedevice('Bedroom', 11000, 1),

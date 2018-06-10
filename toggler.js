@@ -12,7 +12,7 @@ startLightListener = () => {
       console.log("Message received.", msg);
       Toggle(msg.id, msg.action);
 		}
-		setTimeout(startLightListener, 1000);
+		setTimeout(startLightListener, 600);
 	});
 };
 
