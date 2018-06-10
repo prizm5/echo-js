@@ -5,3 +5,4 @@ web-api/npm-debug.log.*
 .vs
 .idea
 npm-debug.log
+node_modules

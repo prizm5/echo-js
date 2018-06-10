@@ -1,7 +1,19 @@
 var outlets = require('./outlets.json');
-var promise = require('promise');
+var exec = require('child_process').exec;
+
 var codeSendPulseLength = "189";
 var codeSendPIN = "0";
+
+RedisSMQ = require("rsmq");
+rsmq = new RedisSMQ({ host: "127.0.0.1", port: 6379, ns: "rsmq" });
+rsmq.receiveMessage({qname:"myqueue"}, function (err, resp) {
+	if (resp.id) {
+		console.log("Message received.", resp)	
+	}
+	else {
+		console.log("No messages for me...")
+	}
+});
 
 var exec = require('child_process').exec;
 var sendCode = function (code) {
@@ -30,11 +42,12 @@ exports.ToggleOn = function (id, state) {
   else {
     var o = outlets.filter(function (o) { return o.id == id; });
   }
-
-  return o.reduce(function(accumulator, currentValue, currentIndex, array) {
-    sendCode(outlet[state])
-      .then((val)=> { return val });
-    console.log('Light tiggered', outlet.id);
-    return accumulator =  currentValue == true;
-  });
+  return o.reduce(
+    ( accumulator, currentValue ) => {
+      console.log(currentValue);
+      var res = sendCode(currentValue[state]);
+      accumulator = res;
+    },
+    false
+  );
 }
