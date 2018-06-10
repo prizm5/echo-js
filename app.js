@@ -38,7 +38,7 @@ let fauxMo = new FauxMo( {
 	devices: [
 		makedevice('Bedroom', 11000, 1),
 		makedevice('Living Room', 11001, 2),
-		makedevice('Balcony', 11002, 3),
+		makedevice('Couch', 11002, 3),
 		makedevice('TV', 11003, 4),
 		makedevice('Chargers', 11004, 5),
 		makedevice('Everything', 11005, 6)
