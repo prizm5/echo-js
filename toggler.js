@@ -6,21 +6,21 @@ var codeSendPIN = "0";
 RedisSMQ = require("rsmq");
 rsmq = new RedisSMQ({ host: "192.168.0.102", port: 6379, ns: "rsmq" });
 rsmq.createQueue({ qname: "myqueue" }, (err, resp) => {
-	if (resp === 1) { console.log("queue created") }
+  if (resp === 1) { console.log("queue created") }
 });
 
 startLightListener = () => {
-	rsmq.popMessage({qname:"myqueue"}, function (err, resp) {
-		if (resp.id) {
-      var msg = JSON.parse(resp.message)	;
+  rsmq.popMessage({ qname: "myqueue" }, function (err, resp) {
+    if (resp.id) {
+      var msg = JSON.parse(resp.message);
       console.log("Message received.", msg);
       Toggle(msg.id, msg.action);
       setTimeout(startLightListener, 600);
     }
-    else{
+    else {
       setTimeout(startLightListener, 200);
     }
-	});
+  });
 };
 
 var sendCode = (code) => {
@@ -40,14 +40,14 @@ var sendCode = (code) => {
 
 Toggle = (id, state) => {
   var o = outlets;
-  if (id !== 6)  {
+  if (id !== 6) {
     o = outlets.filter(function (o) { return o.id == id; });
   }
-  return o.reduce((accumulator, currentValue ) => {
-      console.log(currentValue);
-      var res = sendCode(currentValue[state]);
-      accumulator = res;
-    },
+  return o.reduce((accumulator, currentValue) => {
+    console.log(currentValue);
+    var res = sendCode(currentValue[state]);
+    accumulator = res;
+  },
     false
   );
 }

@@ -10,7 +10,7 @@ let makedevice = (name, port, id) => {
 		name: name,
 		port: port,
 		handler: (action) => {
-			var msg = JSON.stringify({name: name, port: port, id: id, action: action});
+			var msg = JSON.stringify({ name: name, port: port, id: id, action: action });
 			rsmq.sendMessage({ qname: "myqueue", message: msg }, (err, resp) => {
 				if (resp) { console.log("Message sent. ID:", resp); }
 			});
