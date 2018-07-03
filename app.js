@@ -4,7 +4,7 @@ var request = require('request');
 const FauxMo = require('fauxmojs');
 const toggler = require('./toggler');
 var outlets = require('./outlets.json');
-var mqhost = process.env.MQHOST || "192.168.0.102";
+var mqhost = process.env.MQHOST || "127.0.0.1";
 var RedisSMQ = require("rsmq");
 var rsmq = new RedisSMQ({ host: mqhost, port: 6379, ns: "rsmq" });
 
