@@ -2,11 +2,20 @@ var outlets = require('./outlets.json');
 var exec = require('child_process').exec;
 var codeSendPulseLength = "189";
 var codeSendPIN = "0";
+var mqhost = process.env.MQHOST || "192.168.0.102";
 
 RedisSMQ = require("rsmq");
-rsmq = new RedisSMQ({ host: "192.168.0.102", port: 6379, ns: "rsmq" });
+rsmq = new RedisSMQ({ host: mqhost, port: 6379, ns: "rsmq" });
 rsmq.createQueue({ qname: "myqueue" }, (err, resp) => {
   if (resp === 1) { console.log("queue created") }
+});
+
+rsmq.listQueues( function (err, queues) {
+  if( err ){
+    console.error( err )
+    return
+  }
+  console.log("Active queues: " + queues.join( "," ) )
 });
 
 startLightListener = () => {
@@ -44,10 +53,9 @@ Toggle = (id, state) => {
     o = outlets.filter(function (o) { return o.id == id; });
   }
   return o.reduce((accumulator, currentValue) => {
-    console.log(currentValue);
-    var res = sendCode(currentValue[state]);
-    accumulator = res;
-  },
-    false
+      console.log(currentValue);
+      var res = sendCode(currentValue[state]);
+      accumulator = res;
+    },
   );
 }
