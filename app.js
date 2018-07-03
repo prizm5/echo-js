@@ -6,7 +6,7 @@ const toggler = require('./toggler');
 var outlets = require('./outlets.json');
 var mqhost = process.env.MQHOST || "192.168.0.102";
 var RedisSMQ = require("rsmq");
-rsmq = new RedisSMQ({ host: mqhost, port: 6379, ns: "rsmq" });
+var rsmq = new RedisSMQ({ host: mqhost, port: 6379, ns: "rsmq" });
 
 var sendMessage = (name,id,port,action) => {
 	var msg = JSON.stringify({ name: name, port: port, id: id, action: action });
