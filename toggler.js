@@ -20,7 +20,7 @@ rsmq.createQueue({
 
 let getOutlet = (id) => {
   return outlets.filter(function (o) {
-    return o.id == index;
+    return o.id == id;
   })[0];
 }
 startLightListener = () => {
