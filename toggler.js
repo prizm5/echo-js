@@ -75,13 +75,13 @@ var sendCode = (code) => {
 Toggle = (id, state) => {
   console.log('toggling light', id, state);
   outlet = getOutlet(id);
-  if (outlet.lifx) {
+  if (!outlet.lifx) {
+    sendCode(outlet[state]);
+  } else {
     if (state == 'on') {
       controller.turnOnLight(outlet.lifx);
     } else {
       controller.turnOffLight(outlet.lifx);
     }
-  } else {
-    sendCode(outlet[state]);
   }
 }
