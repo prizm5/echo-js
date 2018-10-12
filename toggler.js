@@ -23,7 +23,9 @@ startLightListener = () => {
     qname: "myqueue"
   }, function (err, resp) {
     if (resp.id) {
-      if (resp.id == 6) {
+      var msg = JSON.parse(resp.message);
+      console.log("Message received.", msg);
+      if (msg.id == 6) {
         for (let index = 0; index < 6; index++) {
           var msg = JSON.stringify({
             name: name,
@@ -42,8 +44,6 @@ startLightListener = () => {
         }
         setTimeout(startLightListener, 200);
       } else {
-        var msg = JSON.parse(resp.message);
-        console.log("Message received.", msg);
         Toggle(msg.id, msg.action);
         setTimeout(startLightListener, 600);
       }
