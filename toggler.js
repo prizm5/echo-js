@@ -31,8 +31,8 @@ startLightListener = () => {
       var msg = JSON.parse(resp.message);
       console.log("Message received.", msg);
       if (msg.id == 6) {
-        for (let index = 0; index < 6; index++) {
-          var outlet = getOutlet(index);
+        for (let index = 0; index < 5; index++) {
+          var outlet = getOutlet(index + 1);
           var msgout = JSON.stringify({
             name: outlet.name,
             id: index,
