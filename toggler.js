@@ -35,7 +35,7 @@ startLightListener = () => {
           var outlet = getOutlet(index + 1);
           var msgout = JSON.stringify({
             name: outlet.name,
-            id: index,
+            id: index + 1,
             action: msg.action
           });
           rsmq.sendMessage({
