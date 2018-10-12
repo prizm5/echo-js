@@ -12,6 +12,7 @@
     "child_process": "^1.0.2",
     "express": "^4.15.3",
     "fauxmojs": "^1.0.3",
+    "node-lifx": "^0.8.0",
     "node-upnp-client": "0.0.2",
     "promise": "^8.0.1",
     "request": "^2.81.0",

@@ -1,3 +1,4 @@
+var controller = require('./lifx-controller');
 var outlets = require('./outlets.json');
 var exec = require('child_process').exec;
 var codeSendPulseLength = "189";
@@ -24,7 +25,7 @@ startLightListener = () => {
 };
 
 var sendCode = (code) => {
-  var cmd = 'sudo ./codesend ' + code + ' -p ' + codeSendPIN + ' -l ' + codeSendPulseLength;
+  var cmd = './codesend ' + code + ' -p ' + codeSendPIN + ' -l ' + codeSendPulseLength;
   console.log("Executing command: ", cmd);
   return exec(cmd, (error, stdout, stderr) => {
     if (error || stderr) {
@@ -39,15 +40,31 @@ var sendCode = (code) => {
 }
 
 Toggle = (id, state) => {
+  console.log('toggling light',id,state);
   var o = outlets;
   if (id !== 6) {
-    o = outlets.filter(function (o) { return o.id == id; });
+   o = outlets.filter(function (o) { return o.id == id; });
+   console.log('outlets',o);
   }
-  return o.reduce((accumulator, currentValue) => {
-    console.log(currentValue);
-    var res = sendCode(currentValue[state]);
-    accumulator = res;
-  },
-    false
-  );
+
+    o
+    .filter(function (a) { return a.lifx })
+    .reduce((accumulator, currentValue) => {
+      if(state == 'on') {
+        controller.turnOnLight(currentValue.lifx);
+      } else {
+        controller.turnOffLight(currentValue.lifx);
+        accumulator = true;
+      }},
+      false
+    );
+  return o
+    .filter(function (o) { return !o.lifx })
+    .reduce((accumulator, currentValue) => {
+        console.log(currentValue);
+        var res = sendCode(currentValue[state]);
+        accumulator = res;
+      },
+      false
+    );
 }

@@ -14,23 +14,21 @@ let makedevice = (name, port, id) => {
 			rsmq.sendMessage({ qname: "myqueue", message: msg }, (err, resp) => {
 				if (resp) { console.log("Message sent. ID:", resp); }
 			});
-		},
-		getStateHandler: (device) => {
-			console.log('status checked ', device);
-			return 1; // Always on.
 		}
 	}
 }
 
+
+// makedevice('Living Room', 11001, 2),
+// makedevice('Everything', 11005, 6)
+
 let fauxMo = new FauxMo({
 	ipAddress: '192.168.0.102',
 	devices: [
-		makedevice('Bedroom', 11000, 1),
 		makedevice('Living Room', 11001, 2),
 		makedevice('Couch', 11002, 3),
 		makedevice('TV', 11003, 4),
 		makedevice('Chargers', 11004, 5),
-		makedevice('Everything', 11005, 6)
 	]
 });
 
