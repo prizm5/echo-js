@@ -5,20 +5,49 @@ var codeSendPulseLength = "189";
 var codeSendPIN = "0";
 
 RedisSMQ = require("rsmq");
-rsmq = new RedisSMQ({ host: "127.0.0.1", port: 6379, ns: "rsmq" });
-rsmq.createQueue({ qname: "myqueue" }, (err, resp) => {
-  if (resp === 1) { console.log("queue created") }
+rsmq = new RedisSMQ({
+  host: "127.0.0.1",
+  port: 6379,
+  ns: "rsmq"
+});
+rsmq.createQueue({
+  qname: "myqueue"
+}, (err, resp) => {
+  if (resp === 1) {
+    console.log("queue created")
+  }
 });
 
 startLightListener = () => {
-  rsmq.popMessage({ qname: "myqueue" }, function (err, resp) {
+  rsmq.popMessage({
+    qname: "myqueue"
+  }, function (err, resp) {
     if (resp.id) {
-      var msg = JSON.parse(resp.message);
-      console.log("Message received.", msg);
-      Toggle(msg.id, msg.action);
-      setTimeout(startLightListener, 600);
-    }
-    else {
+      if (resp.id == 6) {
+        for (let index = 0; index < 6; index++) {
+          var msg = JSON.stringify({
+            name: name,
+            port: port,
+            id: index,
+            action: action
+          });
+          rsmq.sendMessage({
+            qname: "myqueue",
+            message: msg
+          }, (err, resp) => {
+            if (resp) {
+              console.log("Message sent. ID:", resp);
+            }
+          });
+        }
+        setTimeout(startLightListener, 200);
+      } else {
+        var msg = JSON.parse(resp.message);
+        console.log("Message received.", msg);
+        Toggle(msg.id, msg.action);
+        setTimeout(startLightListener, 600);
+      }
+    } else {
       setTimeout(startLightListener, 200);
     }
   });
@@ -31,8 +60,7 @@ var sendCode = (code) => {
     if (error || stderr) {
       console.log('Error calling cmd: ', cmd, error, stderr);
       return false;
-    }
-    else {
+    } else {
       console.log("cmd success: ", stdout);
       return true;
     }
@@ -40,31 +68,17 @@ var sendCode = (code) => {
 }
 
 Toggle = (id, state) => {
-  console.log('toggling light',id,state);
-  var o = outlets;
-  if (id !== 6) {
-   o = outlets.filter(function (o) { return o.id == id; });
-   console.log('outlets',o);
+  console.log('toggling light', id, state);
+  outlet = outlets.filter(function (o) {
+    return o.id == id;
+  })[0];
+  if (outlet.lifx) {
+    if (state == 'on') {
+      controller.turnOnLight(outlet.lifx);
+    } else {
+      controller.turnOffLight(outlet.lifx);
+    }
+  } else {
+    sendCode(outlet[state]);
   }
-
-    o
-    .filter(function (a) { return a.lifx })
-    .reduce((accumulator, currentValue) => {
-      if(state == 'on') {
-        controller.turnOnLight(currentValue.lifx);
-      } else {
-        controller.turnOffLight(currentValue.lifx);
-        accumulator = true;
-      }},
-      false
-    );
-  return o
-    .filter(function (o) { return !o.lifx })
-    .reduce((accumulator, currentValue) => {
-        console.log(currentValue);
-        var res = sendCode(currentValue[state]);
-        accumulator = res;
-      },
-      false
-    );
 }
