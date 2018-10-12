@@ -18,6 +18,11 @@ rsmq.createQueue({
   }
 });
 
+let getOutlet = (id) => {
+  return outlets.filter(function (o) {
+    return o.id == index;
+  })[0];
+}
 startLightListener = () => {
   rsmq.popMessage({
     qname: "myqueue"
@@ -27,15 +32,15 @@ startLightListener = () => {
       console.log("Message received.", msg);
       if (msg.id == 6) {
         for (let index = 0; index < 6; index++) {
-          var msg = JSON.stringify({
-            name: name,
-            port: port,
+          var outlet = getOutlet(index);
+          var msgout = JSON.stringify({
+            name: outlet.name,
             id: index,
-            action: action
+            action: msg.action
           });
           rsmq.sendMessage({
             qname: "myqueue",
-            message: msg
+            message: msgout
           }, (err, resp) => {
             if (resp) {
               console.log("Message sent. ID:", resp);
@@ -69,9 +74,7 @@ var sendCode = (code) => {
 
 Toggle = (id, state) => {
   console.log('toggling light', id, state);
-  outlet = outlets.filter(function (o) {
-    return o.id == id;
-  })[0];
+  outlet = getOutlet(id);
   if (outlet.lifx) {
     if (state == 'on') {
       controller.turnOnLight(outlet.lifx);
