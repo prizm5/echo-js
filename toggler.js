@@ -1,16 +1,13 @@
+'use strict';
+
+let qmgr = require('./qmgr');
 var controller = require('./lifx-controller');
 var outlets = require('./outlets.json');
 var exec = require('child_process').exec;
 var codeSendPulseLength = "189";
 var codeSendPIN = "0";
 
-RedisSMQ = require("rsmq");
-rsmq = new RedisSMQ({
-  host: "127.0.0.1",
-  port: 6379,
-  ns: "rsmq"
-});
-rsmq.createQueue({
+qmgr.rsmq.createQueue({
   qname: "myqueue"
 }, (err, resp) => {
   if (resp === 1) {
@@ -23,8 +20,9 @@ let getOutlet = (id) => {
     return o.id == id;
   })[0];
 }
-startLightListener = () => {
-  rsmq.popMessage({
+
+exports.startLightListener = () => {
+  qmgr.rsmq.popMessage({
     qname: "myqueue"
   }, function (err, resp) {
     if (resp.id) {
@@ -58,7 +56,7 @@ startLightListener = () => {
   });
 };
 
-var sendCode = (code) => {
+let sendCode = (code) => {
   var cmd = './codesend ' + code + ' -p ' + codeSendPIN + ' -l ' + codeSendPulseLength;
   console.log("Executing command: ", cmd);
   return exec(cmd, (error, stdout, stderr) => {
@@ -72,7 +70,7 @@ var sendCode = (code) => {
   });
 }
 
-Toggle = (id, state) => {
+let Toggle = (id, state) => {
   console.log('toggling light', id, state);
   outlet = getOutlet(id);
   if (!outlet.lifx) {
@@ -85,3 +83,4 @@ Toggle = (id, state) => {
     }
   }
 }
+

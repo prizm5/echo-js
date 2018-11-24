@@ -1,9 +1,8 @@
 'use strict';
 
-var request = require('request');
 const FauxMo = require('fauxmojs');
-const toggler = require('./toggler');
-var outlets = require('./outlets.json');
+let toggler = require('./toggler');
+let rsmq = require('./qmgr');
 
 let makedevice = (name, port, id) => {
 	return {
@@ -18,9 +17,6 @@ let makedevice = (name, port, id) => {
 	}
 }
 
-// makedevice('Living Room', 11001, 2),
-// makedevice('Everything', 11005, 6)
-
 let fauxMo = new FauxMo({
 	ipAddress: '192.168.0.102',
 	devices: [
@@ -33,4 +29,6 @@ let fauxMo = new FauxMo({
 
 console.log('started..');
 
-startLightListener();
+require('./aws-client');
+
+toggler.startLightListener();
